@@ -1,67 +1,81 @@
 # 🌌 MALLORN: Astrophysics-Informed TDE Classifier
 
-> **MALLORN Challenge** - Giải pháp phân loại sự kiện TDE sử dụng Ensemble Learning kết hợp với các đặc trưng Vật lý Thiên văn chuyên sâu.
+> **MALLORN Classifier Challenge** - Giải pháp phân loại sự kiện TDE (Tidal Disruption Events) sử dụng Ensemble Learning kết hợp với các đặc trưng Vật lý Thiên văn chuyên sâu.
 
-![Status](https://img.shields.io/badge/Status-Completed-success) ![Python](https://img.shields.io/badge/Python-3.10+-blue) ![Features](https://img.shields.io/badge/Physics-Informed-purple) ![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Completed-success) ![Python](https://img.shields.io/badge/Python-3.10+-blue) ![Type](https://img.shields.io/badge/Type-Physics_Informed_ML-purple) ![Device](https://img.shields.io/badge/Device-CPU%20%26%20GPU-orange)
 
 ## 📑 Mục lục
 1. [Giới thiệu](#-giới-thiệu)
-2. [Điểm nổi bật (Key Features)](#-điểm-nổi-bật-key-features)
+2. [Điểm nổi bật (Key Innovations)](#-điểm-nổi-bật-key-innovations)
 3. [Phương pháp Kỹ thuật](#-phương-pháp-kỹ-thuật)
-4. [Cấu trúc Repository](#-cấu-trúc-repository)
+4. [Hiệu suất Mô hình](#-hiệu-suất-mô-hình)
+5. [Cấu trúc Repository](#-cấu-trúc-repository)
 
 
 ---
 
 ## 🚀 Giới thiệu
 
-Dự án này giải quyết bài toán phân loại **Tidal Disruption Events (TDE)** - hiện tượng hiếm gặp khi ngôi sao bị hố đen xé toạc. Khác với các phương pháp thuần dữ liệu (data-driven), giải pháp của chúng tôi tích hợp kiến thức **Vật lý thiên văn (Astrophysics)** để trích xuất các đặc trưng có ý nghĩa thực tế từ dữ liệu quang trắc (lightcurves) nhiễu và không đều.
+**Tidal Disruption Events (TDEs)** là hiện tượng thiên văn hiếm gặp khi một ngôi sao bị lực thủy triều của hố đen siêu khối lượng xé toạc. Thách thức của bài toán MALLORN là tự động phát hiện TDE từ dữ liệu quang trắc (lightcurves) với các đặc điểm khó:
+* **Dữ liệu cực kỳ mất cân bằng:** TDE chỉ chiếm ~4.8% tập dữ liệu.
+* **Dữ liệu thưa và nhiễu:** Chuỗi thời gian không đều, nhiều khoảng trống.
+* **Metadata yếu:** Các thông tin như Redshift nếu dùng thô sơ sẽ không phân tách được các lớp dữ liệu.
 
-Mục tiêu: Tối ưu hóa chỉ số **F1-Score** trên tập dữ liệu mất cân bằng nghiêm trọng (~5% TDE).
+**Mục tiêu:** Xây dựng mô hình phân loại nhị phân tối ưu hóa chỉ số **F1-Score**, chuyển đổi từ phương pháp thuần dữ liệu sang hướng tiếp cận **định hướng vật lý (Physics-Informed)**.
 
 ---
 
-## ✨ Điểm nổi bật (Key Features)
+## ✨ Điểm nổi bật (Key Innovations)
 
-Phiên bản nâng cấp (`improved-model-bonus-features`) mang đến những cải tiến vượt bậc:
+Phiên bản nâng cấp (`improved-model-bonus-features`) mang đến những cải tiến mang tính chiến lược:
 
-* **🔭 Đặc trưng Vật lý Nâng cao:** Thay vì chỉ dùng độ sáng quan sát được, mô hình tính toán **Độ sáng tuyệt đối (Absolute Magnitude)** dựa trên Redshift ($z$) và Khoảng cách độ sáng (Luminosity Distance), giúp phân biệt năng lượng thực sự của vụ nổ.
-* **🎨 Động học Màu sắc (Color Evolution):** Sử dụng Gaussian Process để mô hình hóa tốc độ làm nguội (**Cooling Rate**) của vật thể thông qua độ dốc màu ($g-r$) theo thời gian.
-* **⚡ Tối ưu hóa GPU:** Hỗ trợ xử lý song song và huấn luyện XGBoost/CatBoost trên GPU để tăng tốc độ thử nghiệm.
-* **⚖️ Xử lý Mất cân bằng:** Chiến lược **Cost-Sensitive Learning** với trọng số lớp động (Dynamic Class Weights) và Ngưỡng cắt thích ứng (Adaptive Thresholding).
+* **🔭 Đặc trưng Vật lý Nâng cao:** Thay vì chỉ sử dụng độ sáng quan sát (Flux), chúng tôi kết hợp với **Redshift ($z$)** để tính toán **Độ sáng tuyệt đối ($M_{abs}$)**. Điều này giúp mô hình phân biệt được năng lượng thực sự của một vụ nổ lớn ở xa so với một biến quang nhỏ ở gần.
+* **🌡️ Động học Màu sắc (Cooling Rate):** TDE có đặc trưng "nguội đi" theo thời gian. Chúng tôi tính toán **độ dốc thay đổi màu ($g-r$)** trong khoảng thời gian 20 ngày sau đỉnh sáng để bắt lấy đặc điểm nhiệt động lực học này.
+* **⚡ Tối ưu hóa GPU:** Mã nguồn hỗ trợ `torch` và cấu hình XGBoost/CatBoost chạy trên GPU, tăng tốc độ huấn luyện đáng kể.
+* **⚖️ Xử lý Mất cân bằng thông minh:** Thay vì sinh dữ liệu giả (SMOTE), chúng tôi sử dụng **Cost-Sensitive Learning** (Học nhạy cảm chi phí) và **Ngưỡng động (Dynamic Thresholding)**.
 
 ---
 
 ## 🛠 Phương pháp Kỹ thuật
 
-### 1. Feature Engineering (Trích xuất đặc trưng)
-Quy trình xử lý dữ liệu chuyên sâu được thực hiện song song:
+### 1. Feature Engineering (Trích xuất đặc trưng song song)
+Quy trình xử lý dữ liệu tích hợp kiến thức miền (Domain Knowledge):
 
-* **Mô hình hóa Bazin (Bazin Fitting):** Khớp đường cong ánh sáng vào hàm Bazin $F(t) = A \frac{e^{-(t-t_0)/\tau_{fall}}}{1 + e^{-(t-t_0)/\tau_{rise}}} + B$ để lấy tham số hình dạng vụ nổ ($t_{rise}, t_{fall}$).
-* **Gaussian Process Regression (GP):** Nội suy dữ liệu bị khuyết để dự đoán chính xác Flux tại thời điểm cực đại (Peak) và 20 ngày sau đó.
-* **Vật lý Vũ trụ:**
-    * **Absolute Magnitude ($M_{abs}$):** Chuyển đổi Flux sang độ sáng tuyệt đối để loại bỏ ảnh hưởng của khoảng cách.
-    * **Color Slope:** Tính tốc độ thay đổi màu sắc ($\Delta(g-r)/\Delta t$) để nhận diện đặc trưng làm nguội nhanh của TDE.
-* **Thống kê:** Hệ số Stetson $J, K$ để đánh giá độ tin cậy của tín hiệu biến thiên.
+* **Mô hình hóa Bazin (Bazin Fitting):** Khớp đường cong ánh sáng vào hàm Bazin $F(t)$ để trích xuất tham số hình học ($t_{rise}, t_{fall}$), giúp nhận diện hình dạng "tăng nhanh, giảm từ từ" của TDE.
+* **Gaussian Process Regression (GP):** Nội suy dữ liệu để dự đoán chính xác Flux tại các thời điểm quan trọng (Peak và Post-Peak).
+* **Biến đổi Vật lý:**
+    * Tính khoảng cách độ sáng (Luminosity Distance $d_L$).
+    * Chuyển đổi $Flux \rightarrow M_{abs}$ (Absolute Magnitude).
+* **Thống kê:** Chỉ số Stetson $J, K$ để lọc nhiễu nền.
 
-### 2. Kiến trúc Mô hình (Ensemble Learning)
-Sử dụng **Voting Classifier (Soft Voting)** kết hợp 3 mô hình Gradient Boosting mạnh nhất (SOTA):
+### 2. Kiến trúc Ensemble Learning
+Sử dụng **Soft Voting Classifier** kết hợp 3 mô hình SOTA được tối ưu hóa bằng **Optuna**:
 
-| Mô hình | Vai trò & Cấu hình |
+| Model | Cấu hình & Vai trò |
 | :--- | :--- |
-| **LightGBM** | Cơ chế **DART** (Dropouts) giúp chống Overfitting hiệu quả. |
-| **XGBoost** | **Tree Method = 'hist'** (hỗ trợ GPU), tối ưu hóa tốc độ trên dữ liệu lớn. |
-| **CatBoost** | Tự động xử lý đặc trưng phân loại và cân bằng dữ liệu (**SqrtBalanced**). |
+| **LightGBM** | `boosting_type='dart'` (Dropout Regularization) giúp chống Overfitting. |
+| **XGBoost** | `tree_method='hist'` + **GPU Acceleration** xử lý dữ liệu lớn tốc độ cao. |
+| **CatBoost** | `auto_class_weights='SqrtBalanced'` tự động cân bằng lớp dữ liệu. |
 
-### 3. Chiến lược Hậu xử lý (Post-processing)
-* **Ngưỡng động (Dynamic Thresholding):** Thay vì ngưỡng cứng 0.5, ngưỡng quyết định được tính toán dựa trên phân vị (percentile) xác suất dự đoán, khớp với tỷ lệ TDE trong tập huấn luyện (~4.8%).
+---
+
+## 📊 Hiệu suất Mô hình
+
+Mô hình được đánh giá nghiêm ngặt qua chiến lược **Stratified 5-Fold Cross-Validation**:
+
+* **F1-Score (Validation):** Đạt mức **~0.6595**, cải thiện rõ rệt so với Baseline nhờ các đặc trưng vật lý mới.
+* **Dynamic Thresholding:**
+    * Ngưỡng mặc định 0.5 bỏ sót hầu hết TDE.
+    * Ngưỡng tối ưu **0.1195** (dựa trên phân vị xác suất) giúp bắt được **382** sự kiện TDE trên tập Test (tương ứng **5.35%**), khớp với tỷ lệ thực tế tự nhiên.
 
 ---
 
 ## 📂 Cấu trúc Repository
 
-* **`improved-model-bonus-features.ipynb`**: **[RECOMMENDED]** Phiên bản cao cấp nhất chứa đầy đủ các đặc trưng vật lý và tối ưu hóa GPU.
-* **`improved_model.ipynb`**: Phiên bản ổn định (Stable), tập trung vào các đặc trưng cơ bản và tối ưu hóa tham số Optuna.
+Mã nguồn được tổ chức khoa học:
+
+* **`improved-model-bonus-features.ipynb`**: 🌟 **(Recommended)** Phiên bản cao cấp nhất. Chứa toàn bộ quy trình xử lý đặc trưng vật lý, tính toán độ sáng tuyệt đối, độ dốc màu và tối ưu hóa GPU.
+     * File dự đoán cuối cùng: `submission_final_physics.csv`.
+* **`improved_model.ipynb`**: Phiên bản ổn định (Stable release), tập trung vào các đặc trưng hình học Bazin và tối ưu tham số cơ bản.
 
 ---
-
