@@ -1,10 +1,10 @@
-# 🌌 MALLORN: Phân loại Sự kiện Gián đoạn Thủy triều (TDE)
+# MALLORN: Phân loại Sự kiện Gián đoạn Thủy triều (TDE)
 
 > **MALLORN Classifier Challenge** - Giải pháp Ensemble Learning tối ưu hóa F1-Score cho bài toán phân loại thiên văn mất cân bằng dữ liệu.
 
 ![Status](https://img.shields.io/badge/Status-Completed-success) ![Python](https://img.shields.io/badge/Python-3.10+-blue) ![Ensemble](https://img.shields.io/badge/Model-LGBM%20%7C%20XGB%20%7C%20CatBoost-orange) ![License](https://img.shields.io/badge/License-MIT-green)
 
-## 📑 Mục lục
+## Mục lục
 1. [Tổng quan Dự án](#-tổng-quan-dự-án)
 2. [Phương pháp Tiếp cận (Methodology)](#-phương-pháp-tiếp-cận-methodology)
 3. [Hiệu suất & Kết quả](#-hiệu-suất--kết-quả)
@@ -12,7 +12,7 @@
 
 ---
 
-## 🚀 Tổng quan Dự án
+## Tổng quan Dự án
 
 ### Bối cảnh & Thách thức
 Kính thiên văn **LSST (Vera C. Rubin Observatory)** sắp đi vào hoạt động sẽ tạo ra kỷ nguyên dữ liệu lớn cho thiên văn học. Thách thức đặt ra là tự động phát hiện các sự kiện **Tidal Disruption Events (TDEs)** - hiện tượng hiếm gặp (chỉ chiếm ~5% dữ liệu) khi ngôi sao bị lỗ đen xé toạc, dựa trên dữ liệu ánh sáng (lightcurves) thưa và nhiễu.
@@ -22,7 +22,7 @@ Xây dựng mô hình Machine Learning phân loại nhị phân (TDE vs Non-TDE)
 
 ---
 
-## 🛠 Phương pháp Tiếp cận (Methodology)
+## Phương pháp Tiếp cận (Methodology)
 
 Giải pháp của chúng tôi áp dụng kiến trúc **Ensemble Learning** kết hợp với **Feature Engineering chuyên sâu** trong lĩnh vực vật lý thiên văn.
 
@@ -46,7 +46,7 @@ Thay vì sử dụng dữ liệu thô, chúng tôi trích xuất các đặc tr�
 
 ---
 
-## 📊 Hiệu suất & Kết quả (20%)
+## Hiệu suất & Kết quả (20%)
 
 Mô hình được đánh giá thông qua chiến lược **Stratified K-Fold Cross-Validation (5 Folds)** để đảm bảo độ tin cậy.
 
@@ -60,7 +60,7 @@ Mô hình được đánh giá thông qua chiến lược **Stratified K-Fold Cr
 
 ---
 
-## 📂 Cấu trúc Repository
+## Cấu trúc Repository
 
 * `mallorn.ipynb`: **EDA & Baseline**. Phân tích thống kê, trực quan hóa dữ liệu và kiểm thử ý tưởng ban đầu.
 * `improved_model.ipynb`: **Production Pipeline**. Chứa toàn bộ quy trình từ xử lý dữ liệu, trích xuất đặc trưng song song, tối ưu tham số Optuna đến huấn luyện Ensemble và xuất kết quả.
